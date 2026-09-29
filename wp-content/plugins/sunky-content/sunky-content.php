@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Sunky 作品内容
  * Description: 为 Sunky 站点提供作品、版本记录和下载链接管理。
- * Version: 1.1.0
+ * Version: 1.2.0
  * Requires PHP: 8.0
  * Text Domain: sunky-content
  */
@@ -22,7 +22,7 @@ function sunky_content_register_types() {
 				'edit_item'     => '编辑作品',
 			),
 			'public'       => true,
-				'has_archive'  => false,
+			'has_archive'  => false,
 			'rewrite'      => array( 'slug' => 'works', 'with_front' => false ),
 			'show_in_rest' => true,
 			'menu_icon'    => 'dashicons-products',
@@ -77,19 +77,23 @@ function sunky_content_field( $name, $label, $post, $type = 'text', $hint = '' )
 
 function sunky_content_product_meta_box( $post ) {
 	wp_nonce_field( 'sunky_content_save', 'sunky_content_nonce' );
+	echo '<p class="description">首页卡片的一句话介绍请填写编辑器中的「摘要」；特色图片会覆盖主题自带的作品配图。</p>';
 	sunky_content_field( 'status', '状态', $post, 'text', '例如：开发中、已发布、暂停维护' );
 	sunky_content_field( 'version', '当前版本号', $post, 'text', '例如：v3.4.3。首页和作品页都会显示。' );
 	sunky_content_field( 'tagline', '一句话标题', $post, 'text', '用于作品详情页，例如：让 Markdown 读起来更舒服。' );
+	echo '<hr><h3>作品链接与下载</h3>';
 	sunky_content_field( 'repo_url', '源码仓库地址', $post, 'url' );
 	sunky_content_field( 'site_url', '作品网站地址', $post, 'url' );
 	sunky_content_field( 'download_url', '默认下载地址', $post, 'url', '可填写虚拟主机或对象存储的文件地址。发布版本时可填写该版本专属地址。' );
 	sunky_content_field( 'download_msi_url', 'Windows 安装版（MSI）', $post, 'url' );
 	sunky_content_field( 'download_zip_url', 'Windows 便携版（ZIP）', $post, 'url' );
 	sunky_content_field( 'download_edge_url', 'Edge 扩展（ZIP）', $post, 'url' );
+	echo '<hr><h3>作品亮点</h3>';
 	for ( $index = 1; $index <= 3; $index++ ) {
 		sunky_content_field( 'highlight_' . $index . '_title', '作品亮点 ' . $index . ' 标题', $post );
 		sunky_content_field( 'highlight_' . $index . '_body', '作品亮点 ' . $index . ' 简介', $post );
 	}
+	echo '<hr><h3>主要功能</h3>';
 	for ( $index = 1; $index <= 3; $index++ ) {
 		sunky_content_field( 'feature_' . $index . '_title', '功能 ' . $index . ' 标题', $post );
 		sunky_content_field( 'feature_' . $index . '_body', '功能 ' . $index . ' 简介', $post );
@@ -147,6 +151,52 @@ function sunky_content_save_meta( $post_id ) {
 	}
 }
 add_action( 'save_post', 'sunky_content_save_meta' );
+
+function sunky_content_product_columns( $columns ) {
+	$custom = array();
+	foreach ( $columns as $key => $label ) {
+		$custom[ $key ] = $label;
+		if ( 'title' === $key ) {
+			$custom['sunky_version'] = '当前版本';
+			$custom['sunky_status']  = '状态';
+		}
+	}
+	return $custom;
+}
+add_filter( 'manage_sunky_product_posts_columns', 'sunky_content_product_columns' );
+
+function sunky_content_product_column( $column, $post_id ) {
+	if ( 'sunky_version' === $column || 'sunky_status' === $column ) {
+		$name  = 'sunky_version' === $column ? '_sunky_version' : '_sunky_status';
+		$value = get_post_meta( $post_id, $name, true );
+		echo $value ? esc_html( $value ) : '—';
+	}
+}
+add_action( 'manage_sunky_product_posts_custom_column', 'sunky_content_product_column', 10, 2 );
+
+function sunky_content_release_columns( $columns ) {
+	$custom = array();
+	foreach ( $columns as $key => $label ) {
+		$custom[ $key ] = $label;
+		if ( 'title' === $key ) {
+			$custom['sunky_product']         = '所属作品';
+			$custom['sunky_release_version'] = '版本号';
+		}
+	}
+	return $custom;
+}
+add_filter( 'manage_sunky_release_posts_columns', 'sunky_content_release_columns' );
+
+function sunky_content_release_column( $column, $post_id ) {
+	if ( 'sunky_product' === $column ) {
+		$product_id = (int) get_post_meta( $post_id, '_sunky_product_id', true );
+		echo $product_id ? esc_html( get_the_title( $product_id ) ) : '—';
+	} elseif ( 'sunky_release_version' === $column ) {
+		$version = get_post_meta( $post_id, '_sunky_version', true );
+		echo $version ? esc_html( $version ) : '—';
+	}
+}
+add_action( 'manage_sunky_release_posts_custom_column', 'sunky_content_release_column', 10, 2 );
 
 function sunky_content_release_query( $limit = 5, $product_id = 0 ) {
 	$args = array( 'post_type' => 'sunky_release', 'post_status' => 'publish', 'posts_per_page' => $limit, 'ignore_sticky_posts' => true );

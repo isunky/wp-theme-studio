@@ -11,7 +11,7 @@ $zip      = sunky_studio_meta( $work_id, 'download_zip_url' );
 $edge     = sunky_studio_meta( $work_id, 'download_edge_url' );
 $primary  = $msi ? $msi : ( $default ? $default : ( $zip ? $zip : $edge ) );
 $name     = get_the_title( $work_id );
-$preview  = has_post_thumbnail( $work_id ) ? get_the_post_thumbnail_url( $work_id, 'full' ) : ( strtolower( $name ) === 'mdview' ? get_theme_file_uri( 'assets/mdview-screen.png' ) : sunky_studio_art( $work_id ) );
+$preview  = has_post_thumbnail( $work_id ) ? get_the_post_thumbnail_url( $work_id, 'large' ) : ( strtolower( $name ) === 'mdview' ? get_theme_file_uri( 'assets/mdview-screen.webp' ) : sunky_studio_art( $work_id ) );
 $features = array();
 $highlights = array();
 for ( $i = 1; $i <= 3; $i++ ) {

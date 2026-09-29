@@ -44,23 +44,30 @@ function sunky_studio_version( $post_id ) {
 }
 
 function sunky_studio_art( $post_id ) {
+	if ( has_post_thumbnail( $post_id ) ) {
+		return get_the_post_thumbnail_url( $post_id, 'medium_large' );
+	}
 	$slug = strtolower( (string) get_post_field( 'post_name', $post_id ) );
 	$name = strtolower( (string) get_the_title( $post_id ) );
 	$known = array( 'mdview', 'plainmint', 'qzip', 'dsh-desktop', 'pptx-refactor', 'agent-md-wizard', 'cat-maze-adventure', 'frog-hop' );
 	foreach ( $known as $key ) {
 		if ( $slug === $key || $name === $key ) {
-			$asset = get_theme_file_path( 'assets/' . $key . '.png' );
+			$asset = get_theme_file_path( 'assets/' . $key . '.webp' );
 			if ( file_exists( $asset ) ) {
-				return get_theme_file_uri( 'assets/' . $key . '.png' );
+				return get_theme_file_uri( 'assets/' . $key . '.webp' );
 			}
 		}
 	}
-	return has_post_thumbnail( $post_id ) ? get_the_post_thumbnail_url( $post_id, 'large' ) : '';
+	return '';
 }
 
 function sunky_studio_product_excerpt( $post_id ) {
 	$excerpt = get_post_field( 'post_excerpt', $post_id );
-	return $excerpt ? wp_strip_all_tags( $excerpt ) : wp_trim_words( wp_strip_all_tags( get_post_field( 'post_content', $post_id ) ), 24 );
+	if ( $excerpt ) {
+		return wp_strip_all_tags( $excerpt );
+	}
+	$tagline = sunky_studio_meta( $post_id, 'tagline' );
+	return $tagline ? $tagline : wp_trim_words( wp_strip_all_tags( get_post_field( 'post_content', $post_id ) ), 24 );
 }
 
 function sunky_studio_product_card( $post_id, $position ) {

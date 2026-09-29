@@ -6,7 +6,7 @@
 		<?php if ( 1 === $index && ! is_paged() ) : ?>
 		<a class="article-feature" href="<?php the_permalink(); ?>">
 			<span class="article-feature__copy"><time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>"><?php echo esc_html( get_the_date( 'Y.m.d' ) ); ?></time><strong><?php the_title(); ?></strong><span class="article-feature__excerpt"><?php echo esc_html( get_the_excerpt() ); ?></span><span class="text-link">阅读文章 <span aria-hidden="true">↗</span></span></span>
-			<?php if ( has_post_thumbnail() ) : the_post_thumbnail( 'large', array( 'class' => 'article-feature__image' ) ); else : ?><img class="article-feature__image" src="<?php echo esc_url( get_theme_file_uri( 'assets/mdview.png' ) ); ?>" alt="" loading="eager"><?php endif; ?>
+			<?php if ( has_post_thumbnail() ) : the_post_thumbnail( 'large', array( 'class' => 'article-feature__image' ) ); else : ?><img class="article-feature__image" src="<?php echo esc_url( get_theme_file_uri( 'assets/mdview.webp' ) ); ?>" alt="" loading="eager"><?php endif; ?>
 		</a>
 		<?php else : ?>
 		<?php if ( 2 === $index || ( 1 === $index && is_paged() ) ) : ?><section class="article-list" aria-labelledby="more-articles-title"><h2 id="more-articles-title">所有文章</h2><?php endif; ?>
