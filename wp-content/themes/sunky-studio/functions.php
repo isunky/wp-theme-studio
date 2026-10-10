@@ -84,12 +84,14 @@ function sunky_studio_product_card( $post_id, $position ) {
 	?>
 	<a class="<?php echo esc_attr( $classes ); ?>" href="<?php echo esc_url( get_permalink( $post_id ) ); ?>">
 		<span class="work-card__copy">
+			<?php if ( 0 === $position ) : ?><span class="work-card__eyebrow">01 / 精选作品</span><?php endif; ?>
 			<strong class="work-card__name"><?php echo esc_html( get_the_title( $post_id ) ); ?></strong>
 			<span class="work-card__version"><?php echo esc_html( $version ? $version : '版本 —' ); ?></span>
 			<span class="work-card__description"><?php echo esc_html( sunky_studio_product_excerpt( $post_id ) ); ?></span>
 			<span class="work-card__mark" aria-hidden="true"></span>
 		</span>
 		<?php if ( $art ) : ?><img class="work-card__art" src="<?php echo esc_url( $art ); ?>" alt="" loading="<?php echo 0 === $position ? 'eager' : 'lazy'; ?>"><?php endif; ?>
+		<span class="work-card__arrow" aria-hidden="true">↗</span>
 	</a>
 	<?php
 }
