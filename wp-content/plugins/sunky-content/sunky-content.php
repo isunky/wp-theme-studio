@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Sunky 作品内容
  * Description: 为 Sunky 站点提供作品、版本记录和下载链接管理。
- * Version: 1.2.0
+ * Version: 1.3.0
  * Requires PHP: 8.0
  * Text Domain: sunky-content
  */
@@ -10,6 +10,8 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+require_once __DIR__ . '/includes/demo-content.php';
 
 function sunky_content_register_types() {
 	register_post_type(
